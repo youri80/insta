@@ -1,0 +1,11 @@
+bin/
+obj/
+pub/
+publish/
+out/
+
+# Laufzeitdaten: Token, Cache und gespiegelte Bilder gehoeren nicht ins Repository
+data/
+keys/
+wwwroot/media/instagram/*
+!wwwroot/media/instagram/.gitkeep

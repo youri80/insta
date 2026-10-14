@@ -1,0 +1,37 @@
+# Betrieb auf dem VPS:  docker compose up -d --build
+#
+# .env im selben Verzeichnis anlegen (nicht ins Repository!):
+#   Instagram__InitialAccessToken=IGQV...
+#   Instagram__ProfileUrl=https://www.instagram.com/<profil>/
+#   Instagram__SyncKey=<openssl rand -hex 24>
+#   Instagram__Title=Aktuelles von Instagram
+
+services:
+  instagram-feed:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: instagram-feed:latest
+    restart: unless-stopped
+    # Nur lokal lauschen - nach aussen geht es ueber den Reverse Proxy der Website.
+    ports:
+      - "127.0.0.1:8080:8080"
+    env_file:
+      - .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      Instagram__DataDirectory: /app/data
+      Instagram__MediaDirectory: /app/media
+      Instagram__KeyDirectory: /app/keys
+    volumes:
+      # Der Schluesselbund MUSS persistent sein, sonst ist der gespeicherte Token nach einem
+      # Neustart unlesbar (Data Protection kann nicht mehr entschluesseln).
+      - feed-keys:/app/keys
+      - feed-data:/app/data
+      - feed-media:/app/media
+
+volumes:
+  feed-keys:
+  feed-data:
+  feed-media:

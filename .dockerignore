@@ -1,0 +1,14 @@
+**/bin
+**/obj
+**/data
+**/keys
+**/out
+**/pub
+**/publish
+.git
+.gitignore
+tests
+.vscode
+.idea
+README.md
+docs

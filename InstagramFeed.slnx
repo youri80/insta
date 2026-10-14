@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/InstagramFeed.Service/InstagramFeed.Service.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/InstagramFeed.Tests/InstagramFeed.Tests.csproj" />
+  </Folder>
+</Solution>
