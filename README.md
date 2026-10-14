@@ -208,6 +208,11 @@ curl -s https://eigene-domain.tld/healthz
 * **Schlägt der Abruf fehl, bleibt der alte Feed stehen.** Eine leere API-Antwort löscht das Raster
   nie — das ist der Unterschied zwischen „Instagram hat ein Problem" und „unsere Website ist leer".
 * **Logs** enthalten keine URLs und keine Token.
+* **Eine Warnung bleibt bewusst stehen:** `XmlKeyManager[35]` — „der Schlüsselbund liegt
+  unverschlüsselt auf Platte". Das ist der Vorgabezustand von Data Protection; geschützt wird der
+  Token durch die Dateirechte (`600`) und dadurch, dass der Bund das Gerät nicht verlässt. Wer
+  zusätzlich Verschlüsselung at rest braucht, verschlüsselt das Volume oder hinterlegt ein
+  Zertifikat für `ProtectKeysWithCertificate`.
 * **Data-Protection-Schlüssel persistent halten** (`/app/keys`), sonst ist `data/token.dat` nach
   einem Neustart unlesbar und der Dienst loggt einen klaren Fehler statt still zu schweigen.
 

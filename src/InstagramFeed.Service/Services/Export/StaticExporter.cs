@@ -13,6 +13,8 @@ namespace InstagramFeed.Service.Services.Export;
 /// </summary>
 public sealed class StaticExporter
 {
+    private static readonly string[] MediaExtensions = { ".jpg", ".jpeg", ".png", ".webp", ".gif", ".svg" };
+
     private readonly InstagramSyncService _sync;
     private readonly IFeedRepository _repository;
     private readonly IMediaStore _media;
@@ -45,7 +47,8 @@ public sealed class StaticExporter
         Directory.CreateDirectory(mediaTarget);
 
         var copied = 0;
-        foreach (var file in Directory.EnumerateFiles(_media.DirectoryPath))
+        foreach (var file in Directory.EnumerateFiles(_media.DirectoryPath)
+                     .Where(path => MediaExtensions.Contains(Path.GetExtension(path).ToLowerInvariant())))
         {
             File.Copy(file, Path.Combine(mediaTarget, Path.GetFileName(file)), overwrite: true);
             copied++;
