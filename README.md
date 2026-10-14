@@ -7,9 +7,11 @@ Cookies. Deshalb braucht die Galerie **keinen Consent-Banner**.
 
 * Kein Blazor, kein CMS-Zwang: die bestehende Homepage bindet entweder ein HTML-Fragment
   serverseitig ein, nutzt `feed.json`, oder — auf Webspace ohne .NET — einen **Statik-Export**.
-* Getestet: 49 automatisierte Tests, darunter die Konformitäts-Invarianten (kein Fremdhost in der
+* Getestet: 54 automatisierte Tests, darunter die Konformitäts-Invarianten (kein Fremdhost in der
   Auslieferung, kein `Set-Cookie`, CSP ohne Fremdfreigaben) und ein Integrationstest über die echte
   HTTP-Schicht.
+* **Bedienungsanleitung für den Serverbetrieb: `docs/bedienung.md`** — Installation, Token,
+  Cron-Export, Ausrollen auf die statische Seite, Fehlerbehebung, Datenschutz-Nachweis.
 
 ---
 
@@ -179,15 +181,32 @@ foreach ($feed['posts'] as $post) {
 Das Skript lädt ausschließlich `/instagram/feed.json` und `/instagram/style.css` von der eigenen
 Domain und baut die Kacheln mit `textContent` (kein `innerHTML`).
 
-### D) Webspace ohne .NET: Statik-Export
+### D) Statische Website (Normalfall hier): Statik-Export
 
 ```bash
-dotnet run --project src/InstagramFeed.Service -- export --to ./out
-# out/ enthält: snippet.html, index.html, style.css, feed.json, embed.js, media/instagram/
+dotnet run --project src/InstagramFeed.Service -- export --to ./stage
+# stage/ spiegelt die URL-Struktur der Website:
+#   stage/instagram/       feed.json, style.css, snippet.html, index.html, embed.js
+#   stage/media/instagram/ gespiegelte Bilder
 ```
 
-Den Ordnerinhalt per FTP/rsync hochladen, `snippet.html` einbinden — fertig. Kein .NET beim Hoster
-nötig; die DSGVO-Eigenschaften sind identisch. Den Export per Cron laufen lassen (z. B. stündlich).
+Den Ordnerinhalt ausrollen (Ablage = Adresse, deshalb genügt Spiegeln):
+
+```bash
+rsync -a --delete ./stage/instagram/       /var/www/html/instagram/
+rsync -a --delete ./stage/media/instagram/ /var/www/html/media/instagram/
+```
+
+Dann `stage/instagram/snippet.html` beim Bauen der Seite einsetzen und
+`<link rel="stylesheet" href="/instagram/style.css">` in den `<head>` — fertig. Kein .NET beim
+Hoster nötig; die DSGVO-Eigenschaften sind identisch. Den Export per Cron laufen lassen
+(z. B. stündlich).
+
+**Vollständige Schritt-für-Schritt-Anleitung für den Serverbetrieb: `docs/bedienung.md`.**
+
+> Achtung: Der Export bildet die konfigurierten Pfade ab. Wer `PublicBasePath` oder
+> `MediaUrlPrefix` umstellt, muss die Zielordner beim Ausrollen entsprechend anpassen — die
+> Verweise im Fragment folgen der Konfiguration.
 
 ---
 
