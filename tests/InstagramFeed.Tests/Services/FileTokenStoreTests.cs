@@ -33,7 +33,9 @@ public sealed class FileTokenStoreTests : IDisposable
     [Fact]
     public async Task Token_file_does_not_contain_the_plaintext_token()
     {
-        const string secret = "IGQVJYb1ZAZA1234567890_SECRET";
+        // Bewusst kein Instagram-foermiges Literal: in einem oeffentlichen Repository soll kein
+        // Scanner einen echten Token vermuten und niemand die Zeichenkette kopieren.
+        const string secret = "TEST-TOKEN-NUR-FUER-DIESE-PRUEFUNG";
         var provider = DataProtectionProvider.Create(new DirectoryInfo(Path.Combine(_root, "keys")));
         var options = TestFactory.Options(o => o.DataDirectory = Path.Combine(_root, "data"));
         var store = new FileTokenStore(provider, options, TestFactory.Environment(_root), NullLogger<FileTokenStore>.Instance);
